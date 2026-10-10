@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block title %}Reel Script — RepurposeKit AI{% endblock %}
+{% block page_title %}Reel Script{% endblock %}
+
+{% block content %}
+<div class="container">
+  {% if is_mock %}
+  <div class="badge-demo">⚠️ Demo Mode — illustrative reel script.</div>
+  {% endif %}
+
+  <div class="results-header">
+    <div class="results-meta">{{ platform }} · {{ duration }}</div>
+    <h1 class="results-title">{{ result.topic }}</h1>
+  </div>
+
+  <!-- Hook -->
+  <div class="card form-card" style="margin-bottom:1.25rem; border-left: 4px solid var(--blue);">
+    <div class="card-label">&#128293; Opening Hook</div>
+    <p id="reelHook" style="font-size:1.05rem; font-weight:600; color:var(--navy); margin:.5rem 0 .75rem;">{{ result.hook }}</p>
+    <button class="btn btn-copy btn-sm" data-target="reelHook">Copy Hook</button>
+  </div>
+
+  <!-- Storyboard summary -->
+  <div class="card form-card" style="margin-bottom:1.25rem;">
+    <div class="card-label">Storyboard Summary</div>
+    <p style="font-size:.875rem; line-height:1.7; margin:.5rem 0;">{{ result.storyboard_summary }}</p>
+  </div>
+
+  <!-- Scenes -->
+  <div class="card-label" style="margin-bottom:.75rem;">Scene Breakdown</div>
+  {% for scene in result.scenes %}
+  <div class="card scene-card">
+    <div class="scene-header">
+      <span class="scene-num">Scene {{ scene.scene_number }}</span>
+      <span class="scene-timestamp">{{ scene.timestamp }}</span>
+    </div>
+    <div class="scene-grid">
+      <div>
+        <div class="scene-section-label">&#127909; Visual Direction</div>
+        <div class="scene-text" id="sceneVisual{{ loop.index0 }}">{{ scene.visual }}</div>
+      </div>
+      <div>
+        <div class="scene-section-label">&#127908; Script Line</div>
+        <div class="scene-text" id="sceneScript{{ loop.index0 }}">{{ scene.script_line }}</div>
+        <button class="btn btn-copy btn-sm" style="margin-top:.5rem;" data-target="sceneScript{{ loop.index0 }}">Copy</button>
+      </div>
+    </div>
+    {% if scene.broll %}
+    <div class="scene-broll">&#127916; B-Roll: {{ scene.broll }}</div>
+    {% endif %}
+  </div>
+  {% endfor %}
+
+  <!-- Caption -->
+  <div class="card form-card" style="margin-top:1.25rem;">
+    <div class="card-label">Post Caption</div>
+    <p id="reelCaption" style="font-size:.875rem; line-height:1.7; white-space:pre-wrap; margin:.5rem 0 .75rem;">{{ result.caption }}</p>
+    <button class="btn btn-copy btn-sm" data-target="reelCaption">Copy Caption</button>
+  </div>
+
+  <!-- Hashtags -->
+  <div class="card form-card" style="margin-top:1rem;">
+    <div class="card-label">Hashtags</div>
+    <div class="hashtag-list" style="margin-top:.5rem;" id="reelHashtags">
+      {% for tag in result.hashtags %}<span class="hashtag">{{ tag }}</span>{% endfor %}
+    </div>
+    <button class="btn btn-copy btn-sm" style="margin-top:.75rem;" data-target="reelHashtags">Copy Hashtags</button>
+  </div>
+
+  <div class="actions-bar" style="margin-top:1.5rem;">
+    <a href="/reels" class="btn btn-ghost">&#8592; New Script</a>
+  </div>
+</div>
+{% endblock %}

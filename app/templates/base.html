@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}RepurposeKit AI{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/style.css" />
+  <meta name="description" content="AI-powered Social Media Growth and Creator Intelligence Platform." />
+</head>
+<body class="app-layout">
+
+  <!-- Sidebar -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+      <a href="/" class="sidebar-brand">
+        <span class="brand-icon">⚡</span>
+        <span class="brand-text">RepurposeKit <span class="brand-ai">AI</span></span>
+      </a>
+      <button class="sidebar-toggle" id="sidebarToggle" aria-label="Toggle sidebar">&#9776;</button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-section">
+        <span class="nav-section-label">Overview</span>
+        <a href="/dashboard" class="sidebar-link {% if request.url.path == '/dashboard' %}active{% endif %}">
+          <span class="nav-icon">&#9632;</span> Dashboard
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-section-label">Content Tools</span>
+        <a href="/" class="sidebar-link {% if request.url.path == '/' %}active{% endif %}">
+          <span class="nav-icon">&#8635;</span> Repurpose
+        </a>
+        <a href="/hashtags" class="sidebar-link {% if request.url.path == '/hashtags' %}active{% endif %}">
+          <span class="nav-icon">#</span> Hashtags
+        </a>
+        <a href="/carousel" class="sidebar-link {% if request.url.path == '/carousel' %}active{% endif %}">
+          <span class="nav-icon">&#9700;</span> Carousel
+        </a>
+        <a href="/reels" class="sidebar-link {% if request.url.path == '/reels' %}active{% endif %}">
+          <span class="nav-icon">&#9654;</span> Reels
+        </a>
+        <a href="/ideas" class="sidebar-link {% if request.url.path == '/ideas' %}active{% endif %}">
+          <span class="nav-icon">&#128161;</span> Ideas
+        </a>
+        <a href="/optimizer" class="sidebar-link {% if request.url.path == '/optimizer' %}active{% endif %}">
+          <span class="nav-icon">&#10024;</span> Optimizer
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-section-label">Strategy</span>
+        <a href="/planner" class="sidebar-link {% if request.url.path == '/planner' %}active{% endif %}">
+          <span class="nav-icon">&#128197;</span> Planner
+        </a>
+        <a href="/posting-times" class="sidebar-link {% if request.url.path == '/posting-times' %}active{% endif %}">
+          <span class="nav-icon">&#9201;</span> Timing
+        </a>
+        <a href="/ads" class="sidebar-link {% if request.url.path == '/ads' %}active{% endif %}">
+          <span class="nav-icon">&#128200;</span> Ads Lab
+        </a>
+      </div>
+
+      <div class="nav-section">
+        <span class="nav-section-label">Library</span>
+        <a href="/history" class="sidebar-link {% if request.url.path.startswith('/history') %}active{% endif %}">
+          <span class="nav-icon">&#128193;</span> History
+        </a>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      {% if is_mock is defined and is_mock %}
+      <div class="mock-badge">Demo Mode</div>
+      {% endif %}
+      <span class="sidebar-version">v2.0.0</span>
+    </div>
+  </aside>
+
+  <!-- Main wrapper -->
+  <div class="main-wrapper">
+    <header class="topbar">
+      <button class="topbar-toggle" id="topbarToggle" aria-label="Open menu">&#9776;</button>
+      <div class="topbar-title">{% block page_title %}RepurposeKit AI{% endblock %}</div>
+      <div class="topbar-actions">
+        <a href="/dashboard" class="topbar-link">Dashboard</a>
+        <a href="/health" class="topbar-link topbar-health">&#9679; Live</a>
+      </div>
+    </header>
+
+    <main class="page-content">
+      {% if error_title is defined %}
+      <div class="container">
+        <div class="error-page">
+          <h1>{{ error_title }}</h1>
+          <p>{{ error_message }}</p>
+          <a href="/" class="btn btn-primary">Go Home</a>
+        </div>
+      </div>
+      {% else %}
+      {% block content %}{% endblock %}
+      {% endif %}
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        <span>RepurposeKit AI — IBM User Group Nagpur · Build with IBM Bob Hack Day 2025</span>
+        <span class="footer-sep">·</span>
+        <span>Hackathon Prototype — Not for production use</span>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toastContainer" class="toast-container"></div>
+  <!-- Legacy copy notification support -->
+  <div id="copyNotification" class="copy-notification hidden"></div>
+
+  <script src="/static/js/velaris.js"></script>
+  <script src="/static/js/app.js"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

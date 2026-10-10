@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+{% block title %}Hashtag Finder — RepurposeKit AI{% endblock %}
+{% block page_title %}Hashtag Finder{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Hashtag Finder</h1>
+      <p class="page-sub">Generate targeted hashtag sets grouped by volume, niche, and reach.</p>
+    </div>
+  </div>
+
+  {% if errors is defined and errors %}
+  <div class="alert alert-error">
+    <strong>Please fix the following:</strong>
+    <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+
+  {% if is_mock is defined and is_mock %}
+  <div class="badge-demo">⚠️ Demo Mode — results are illustrative, not real data.</div>
+  {% endif %}
+
+  <div class="card form-card">
+    <form method="post" action="/hashtags">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+
+      <div class="field-group">
+        <label class="field-label" for="topic">Topic / Content subject <span class="req">*</span></label>
+        <input class="input" type="text" id="topic" name="topic" required maxlength="500"
+               placeholder="e.g. Morning routines for productivity"
+               value="{{ topic if topic is defined else '' }}" />
+        <div class="field-hint">What is the post or content about?</div>
+      </div>
+
+      <div class="form-row">
+        <div class="field-group">
+          <label class="field-label" for="niche">Your Niche <span class="req">*</span></label>
+          <input class="input" type="text" id="niche" name="niche" required maxlength="200"
+                 placeholder="e.g. Fitness, Personal Finance, Tech"
+                 value="{{ niche if niche is defined else '' }}" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="audience">Target Audience <span class="req">*</span></label>
+          <input class="input" type="text" id="audience" name="audience" required maxlength="200"
+                 placeholder="e.g. Entrepreneurs, Students, Marketers"
+                 value="{{ audience if audience is defined else '' }}" />
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="caption">Caption (optional)</label>
+        <textarea class="textarea" id="caption" name="caption" rows="3"
+                  placeholder="Paste your post caption here for context…">{{ caption if caption is defined else '' }}</textarea>
+        <div class="field-hint">Optional — helps tailor hashtags to your specific post.</div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg" id="hashtagBtn">
+          <span class="btn-text">Generate Hashtags</span>
+          <span class="btn-loading hidden">Generating…</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function() {
+    const form = document.querySelector('form');
+    const btn = document.getElementById('hashtagBtn');
+    if (form && btn) {
+      form.addEventListener('submit', function() {
+        const t = btn.querySelector('.btn-text');
+        const l = btn.querySelector('.btn-loading');
+        if (t && l) { t.classList.add('hidden'); l.classList.remove('hidden'); }
+        btn.disabled = true;
+      });
+    }
+  })();
+</script>
+{% endblock %}

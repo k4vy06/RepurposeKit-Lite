@@ -1,0 +1,87 @@
+{% extends "base.html" %}
+{% block title %}Hashtag Results — RepurposeKit AI{% endblock %}
+{% block page_title %}Hashtag Results{% endblock %}
+
+{% block content %}
+<div class="container">
+  {% if is_mock %}
+  <div class="badge-demo">⚠️ Demo Mode — these are illustrative hashtags, not real trend data.</div>
+  {% endif %}
+
+  <div class="results-header">
+    <div class="results-meta">Topic: <strong>{{ topic }}</strong> · Niche: <strong>{{ niche }}</strong> · Audience: <strong>{{ audience }}</strong></div>
+    <h1 class="results-title">{{ result.total_count }} Hashtags Generated</h1>
+  </div>
+
+  <!-- Caption suggestion -->
+  <div class="card form-card" style="margin-bottom: 1.25rem;">
+    <div class="card-label">Suggested Caption</div>
+    <p id="captionSuggestion" style="font-size:.9rem; line-height:1.7; margin:.5rem 0 .75rem;">{{ result.caption_suggestion }}</p>
+    <button class="btn btn-copy btn-sm" data-target="captionSuggestion">Copy Caption</button>
+  </div>
+
+  <!-- Hashtag groups -->
+  <div class="hashtag-groups">
+    {% for group in result.groups %}
+    <div class="card hashtag-group-card">
+      <div class="hashtag-group-header">
+        <div>
+          <div class="hashtag-group-label">{{ group.label }}</div>
+          {% if group.tip %}<div class="hashtag-group-tip">{{ group.tip }}</div>{% endif %}
+        </div>
+        <button class="btn btn-copy-all btn-sm" data-group="{{ loop.index }}">Copy All</button>
+      </div>
+      <div class="hashtag-list" id="group{{ loop.index }}">
+        {% for tag in group.hashtags %}
+        <span class="hashtag hashtag-selectable" data-tag="{{ tag }}">{{ tag }}</span>
+        {% endfor %}
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="actions-bar" style="margin-top:1.5rem;">
+    <button class="btn btn-primary" id="copySelectedBtn">Copy Selected Hashtags</button>
+    <button class="btn btn-secondary" id="copyAllHashtagsBtn">Copy All {{ result.total_count }} Hashtags</button>
+    <a href="/hashtags" class="btn btn-ghost">&#8592; New Search</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  // Toggle selection
+  document.querySelectorAll('.hashtag-selectable').forEach(function(el) {
+    el.addEventListener('click', function() {
+      this.classList.toggle('selected');
+    });
+  });
+
+  // Copy group
+  document.querySelectorAll('.btn-copy-all[data-group]').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var gid = this.dataset.group;
+      var tags = document.querySelectorAll('#group' + gid + ' .hashtag');
+      var text = Array.from(tags).map(function(t) { return t.dataset.tag; }).join(' ');
+      navigator.clipboard.writeText(text).then(function() { showToast('Group copied!'); });
+    });
+  });
+
+  // Copy selected
+  document.getElementById('copySelectedBtn').addEventListener('click', function() {
+    var selected = document.querySelectorAll('.hashtag-selectable.selected');
+    if (!selected.length) { showToast('Select hashtags first by clicking them.', 'warn'); return; }
+    var text = Array.from(selected).map(function(t) { return t.dataset.tag; }).join(' ');
+    navigator.clipboard.writeText(text).then(function() { showToast(selected.length + ' hashtags copied!'); });
+  });
+
+  // Copy all
+  document.getElementById('copyAllHashtagsBtn').addEventListener('click', function() {
+    var all = document.querySelectorAll('.hashtag-selectable');
+    var text = Array.from(all).map(function(t) { return t.dataset.tag; }).join(' ');
+    navigator.clipboard.writeText(text).then(function() { showToast('All hashtags copied!'); });
+  });
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block title %}Weekly Plan — RepurposeKit AI{% endblock %}
+{% block page_title %}Weekly Content Plan{% endblock %}
+
+{% block content %}
+<div class="container">
+  {% if is_mock %}
+  <div class="badge-demo">⚠️ Demo Mode — illustrative weekly plan.</div>
+  {% endif %}
+
+  <div class="results-header">
+    <div class="results-meta">Niche: <strong>{{ niche }}</strong> · Frequency: <strong>{{ frequency }}</strong></div>
+    <h1 class="results-title">Your {{ plan_days | length }}-Day Content Plan</h1>
+    <p style="color:var(--muted); font-size:.875rem; margin-top:.35rem;">Objective: {{ objective }}</p>
+  </div>
+
+  <div class="week-table">
+    {% for day in plan_days %}
+    <div class="week-day-card card">
+      <div class="week-day-header">
+        <span class="week-day-name">{{ day.day }}</span>
+        <span class="week-day-theme">{{ day.theme }}</span>
+      </div>
+      {% for post in day.posts %}
+      <div class="week-post">
+        <div class="week-post-meta">
+          <span class="week-platform-badge">{{ post.platform }}</span>
+          <span class="week-content-type">{{ post.content_type }}</span>
+          <span class="week-time">&#9201; {{ post.best_time }}</span>
+        </div>
+        <div class="week-post-topic">{{ post.topic }}</div>
+        <div class="week-post-hook" id="planHook{{ loop.index0 }}_{{ loop.index0 }}">{{ post.hook }}</div>
+        <button class="btn btn-copy btn-sm" style="margin-top:.4rem;" data-target="planHook{{ loop.index0 }}_{{ loop.index0 }}">Copy Hook</button>
+      </div>
+      {% endfor %}
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="actions-bar" style="margin-top:1.5rem;">
+    <a href="/planner" class="btn btn-ghost">&#8592; New Plan</a>
+  </div>
+</div>
+{% endblock %}

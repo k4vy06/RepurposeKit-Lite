@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}History — RepurposeKit Lite{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <h1 class="page-title">Generation History</h1>
+    <a href="/" class="btn btn-primary">+ New Generation</a>
+  </div>
+
+  {% if generations %}
+  <div class="history-list">
+    {% for g in generations %}
+    <div class="card history-card">
+      <div class="history-main">
+        <h3 class="history-title">{{ g.title }}</h3>
+        <div class="history-meta">
+          <span class="pill pill-{{ g.tone }}">{{ g.tone | capitalize }}</span>
+          <span class="history-date">{{ g.created_at.strftime('%d %b %Y, %H:%M') }}</span>
+        </div>
+        <p class="history-excerpt">{{ g.source_content[:120] }}{% if g.source_content | length > 120 %}…{% endif %}</p>
+      </div>
+      <div class="history-action">
+        <a href="/history/{{ g.id }}" class="btn btn-secondary btn-sm">View</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <p class="empty-icon">📋</p>
+    <p>No generations yet.</p>
+    <a href="/" class="btn btn-primary">Create your first one</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

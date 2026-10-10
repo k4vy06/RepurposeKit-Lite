@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — RepurposeKit AI{% endblock %}
+{% block page_title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Creator Dashboard</h1>
+      <p class="page-sub">Your AI-powered content command centre.</p>
+    </div>
+  </div>
+
+  <!-- Stats row -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value">{{ total_gens }}</div>
+      <div class="stat-label">Repurposed Posts</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{ total_hashtags }}</div>
+      <div class="stat-label">Hashtag Sets</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{ total_carousels }}</div>
+      <div class="stat-label">Carousels Created</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value">{{ total_reels }}</div>
+      <div class="stat-label">Reel Scripts</div>
+    </div>
+  </div>
+
+  <!-- Tool grid -->
+  <h2 class="section-title">AI Tools</h2>
+  <div class="tool-grid">
+    <a href="/" class="tool-card">
+      <div class="tool-icon tool-icon-blue">&#8635;</div>
+      <div class="tool-info">
+        <div class="tool-name">Content Repurposer</div>
+        <div class="tool-desc">Turn one idea into LinkedIn, X, Instagram &amp; Newsletter posts.</div>
+      </div>
+    </a>
+    <a href="/hashtags" class="tool-card">
+      <div class="tool-icon tool-icon-purple">#</div>
+      <div class="tool-info">
+        <div class="tool-name">Hashtag Finder</div>
+        <div class="tool-desc">Generate targeted hashtag sets grouped by volume and reach.</div>
+      </div>
+    </a>
+    <a href="/carousel" class="tool-card">
+      <div class="tool-icon tool-icon-teal">&#9700;</div>
+      <div class="tool-info">
+        <div class="tool-name">Carousel Studio</div>
+        <div class="tool-desc">Build slide-by-slide carousel scripts for Instagram and LinkedIn.</div>
+      </div>
+    </a>
+    <a href="/reels" class="tool-card">
+      <div class="tool-icon tool-icon-red">&#9654;</div>
+      <div class="tool-info">
+        <div class="tool-name">Reel Script Studio</div>
+        <div class="tool-desc">Generate scene-by-scene reel scripts with hooks and captions.</div>
+      </div>
+    </a>
+    <a href="/ideas" class="tool-card">
+      <div class="tool-icon tool-icon-yellow">&#128161;</div>
+      <div class="tool-info">
+        <div class="tool-name">Idea Generator</div>
+        <div class="tool-desc">Get 8 high-performing content ideas tailored to your niche.</div>
+      </div>
+    </a>
+    <a href="/optimizer" class="tool-card">
+      <div class="tool-icon tool-icon-blue">&#10024;</div>
+      <div class="tool-info">
+        <div class="tool-name">Hook Optimizer</div>
+        <div class="tool-desc">Score and rewrite your hooks and captions for maximum impact.</div>
+      </div>
+    </a>
+    <a href="/planner" class="tool-card">
+      <div class="tool-icon tool-icon-green">&#128197;</div>
+      <div class="tool-info">
+        <div class="tool-name">Weekly Planner</div>
+        <div class="tool-desc">Get a full week content calendar matched to your posting frequency.</div>
+      </div>
+    </a>
+    <a href="/posting-times" class="tool-card">
+      <div class="tool-icon tool-icon-teal">&#9201;</div>
+      <div class="tool-info">
+        <div class="tool-name">Posting Time Advisor</div>
+        <div class="tool-desc">Find the best times to post for your platform, niche and audience.</div>
+      </div>
+    </a>
+    <a href="/ads" class="tool-card">
+      <div class="tool-icon tool-icon-orange">&#128200;</div>
+      <div class="tool-info">
+        <div class="tool-name">Ads Intelligence Lab</div>
+        <div class="tool-desc">Calculate ad metrics and generate campaign briefs in seconds.</div>
+      </div>
+    </a>
+  </div>
+
+  <!-- Recent activity -->
+  {% if recent_gens %}
+  <h2 class="section-title" style="margin-top: 2.5rem;">Recent Activity</h2>
+  <div class="history-list">
+    {% for gen in recent_gens %}
+    <div class="history-card card">
+      <div class="history-main">
+        <div class="history-title">{{ gen.title }}</div>
+        <div class="history-meta">
+          <span class="pill pill-{{ gen.tone }}">{{ gen.tone }}</span>
+          <span class="history-date">{{ gen.created_at.strftime('%b %d, %Y') }}</span>
+        </div>
+        <div class="history-excerpt">{{ gen.source_content[:120] }}{% if gen.source_content|length > 120 %}…{% endif %}</div>
+      </div>
+      <div class="history-action">
+        <a href="/history/{{ gen.id }}" class="btn btn-ghost btn-sm">View</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

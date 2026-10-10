@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Reel Script Studio — RepurposeKit AI{% endblock %}
+{% block page_title %}Reel Script Studio{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Reel Script Studio</h1>
+      <p class="page-sub">Generate scene-by-scene reel scripts with hooks, visuals, and captions.</p>
+    </div>
+  </div>
+
+  {% if errors is defined and errors %}
+  <div class="alert alert-error">
+    <strong>Please fix the following:</strong>
+    <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+
+  {% if is_mock is defined and is_mock %}
+  <div class="badge-demo">⚠️ Demo Mode — results are illustrative.</div>
+  {% endif %}
+
+  <div class="card form-card">
+    <form method="post" action="/reels">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+
+      <div class="field-group">
+        <label class="field-label" for="topic">Topic <span class="req">*</span></label>
+        <input class="input" type="text" id="topic" name="topic" required maxlength="500"
+               placeholder="e.g. 3 habits that changed my morning routine"
+               value="{{ topic if topic is defined else '' }}" />
+      </div>
+
+      <div class="form-row">
+        <div class="field-group">
+          <label class="field-label" for="platform">Platform</label>
+          <select class="select" id="platform" name="platform">
+            <option value="Instagram">Instagram Reels</option>
+            <option value="TikTok">TikTok</option>
+            <option value="YouTube">YouTube Shorts</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="duration">Duration</label>
+          <select class="select" id="duration" name="duration">
+            <option value="15s">15 seconds</option>
+            <option value="30s">30 seconds</option>
+            <option value="60s" selected>60 seconds</option>
+            <option value="90s">90 seconds</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="style">Style</label>
+          <select class="select" id="style" name="style">
+            <option value="Educational">Educational</option>
+            <option value="Storytelling">Storytelling</option>
+            <option value="Listicle">Listicle / Tips</option>
+            <option value="POV">POV</option>
+            <option value="Trending">Trending / Viral</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field-group">
+          <label class="field-label" for="niche">Niche <span class="req">*</span></label>
+          <input class="input" type="text" id="niche" name="niche" required maxlength="200"
+                 placeholder="e.g. Health & Wellness"
+                 value="{{ niche if niche is defined else '' }}" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="audience">Target Audience</label>
+          <input class="input" type="text" id="audience" name="audience" maxlength="200"
+                 placeholder="e.g. Busy professionals"
+                 value="{{ audience if audience is defined else '' }}" />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg" id="reelBtn">
+          <span class="btn-text">Generate Reel Script</span>
+          <span class="btn-loading hidden">Generating…</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function() {
+    const form = document.querySelector('form');
+    const btn = document.getElementById('reelBtn');
+    if (form && btn) {
+      form.addEventListener('submit', function() {
+        const t = btn.querySelector('.btn-text');
+        const l = btn.querySelector('.btn-loading');
+        if (t && l) { t.classList.add('hidden'); l.classList.remove('hidden'); }
+        btn.disabled = true;
+      });
+    }
+  })();
+</script>
+{% endblock %}

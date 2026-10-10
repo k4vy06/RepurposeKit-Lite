@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+{% block title %}Ads Intelligence Lab — RepurposeKit AI{% endblock %}
+{% block page_title %}Ads Intelligence Lab{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Ads Intelligence Lab</h1>
+      <p class="page-sub">Calculate ad metrics and understand your campaign performance instantly.</p>
+    </div>
+  </div>
+
+  {% if is_mock is defined and is_mock %}
+  <div class="badge-demo">⚠️ Demo Mode — calculator uses your inputs only.</div>
+  {% endif %}
+
+  <!-- Ads Calculator -->
+  <div class="card form-card" style="margin-bottom:1.5rem;">
+    <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:1.25rem;">Ads Metrics Calculator</h2>
+
+    <div class="form-row">
+      <div class="field-group">
+        <label class="field-label" for="adSpend">Ad Spend ($)</label>
+        <input class="input" type="number" id="adSpend" placeholder="e.g. 500" min="0" step="0.01" />
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="impressions">Impressions</label>
+        <input class="input" type="number" id="impressions" placeholder="e.g. 50000" min="0" />
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="clicks">Clicks</label>
+        <input class="input" type="number" id="clicks" placeholder="e.g. 1500" min="0" />
+      </div>
+    </div>
+
+    <div class="form-row">
+      <div class="field-group">
+        <label class="field-label" for="conversions">Conversions</label>
+        <input class="input" type="number" id="conversions" placeholder="e.g. 45" min="0" />
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="revenue">Revenue Generated ($)</label>
+        <input class="input" type="number" id="revenue" placeholder="e.g. 2250" min="0" step="0.01" />
+      </div>
+    </div>
+
+    <button class="btn btn-primary" id="calcBtn">Calculate Metrics</button>
+
+    <div id="calcResults" class="calc-results hidden" style="margin-top:1.5rem;">
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-value" id="ctrVal">—</div>
+          <div class="stat-label">CTR</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="cpcVal">—</div>
+          <div class="stat-label">CPC</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="cpaVal">—</div>
+          <div class="stat-label">CPA</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="roasVal">—</div>
+          <div class="stat-label">ROAS</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value" id="cvrVal">—</div>
+          <div class="stat-label">CVR</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tips -->
+  <div class="card form-card">
+    <h2 style="font-size:1.1rem; font-weight:700; margin-bottom:1rem;">Ad Benchmarks by Platform</h2>
+    <div class="bench-table">
+      <div class="bench-row bench-header">
+        <span>Platform</span><span>Avg CTR</span><span>Avg CPC</span><span>Avg CVR</span>
+      </div>
+      <div class="bench-row">
+        <span>Facebook / Meta</span><span>0.9%</span><span>$1.72</span><span>9.2%</span>
+      </div>
+      <div class="bench-row">
+        <span>Instagram</span><span>0.7%</span><span>$3.56</span><span>1.1%</span>
+      </div>
+      <div class="bench-row">
+        <span>LinkedIn</span><span>0.4%</span><span>$5.26</span><span>6.1%</span>
+      </div>
+      <div class="bench-row">
+        <span>TikTok Ads</span><span>1.0%</span><span>$1.00</span><span>1.9%</span>
+      </div>
+      <div class="bench-row">
+        <span>Google Search</span><span>3.2%</span><span>$2.69</span><span>4.4%</span>
+      </div>
+    </div>
+    <p style="font-size:.775rem; color:var(--muted); margin-top:.75rem;">* Industry averages for reference only. Actual results vary by niche and creative quality.</p>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  document.getElementById('calcBtn').addEventListener('click', function() {
+    var spend = parseFloat(document.getElementById('adSpend').value) || 0;
+    var imp = parseFloat(document.getElementById('impressions').value) || 0;
+    var clicks = parseFloat(document.getElementById('clicks').value) || 0;
+    var conv = parseFloat(document.getElementById('conversions').value) || 0;
+    var rev = parseFloat(document.getElementById('revenue').value) || 0;
+
+    var ctr = imp > 0 ? (clicks / imp * 100).toFixed(2) + '%' : '—';
+    var cpc = clicks > 0 ? '$' + (spend / clicks).toFixed(2) : '—';
+    var cpa = conv > 0 ? '$' + (spend / conv).toFixed(2) : '—';
+    var roas = spend > 0 ? (rev / spend).toFixed(2) + 'x' : '—';
+    var cvr = clicks > 0 ? (conv / clicks * 100).toFixed(2) + '%' : '—';
+
+    document.getElementById('ctrVal').textContent = ctr;
+    document.getElementById('cpcVal').textContent = cpc;
+    document.getElementById('cpaVal').textContent = cpa;
+    document.getElementById('roasVal').textContent = roas;
+    document.getElementById('cvrVal').textContent = cvr;
+    document.getElementById('calcResults').classList.remove('hidden');
+    showToast('Metrics calculated!');
+  });
+})();
+</script>
+{% endblock %}

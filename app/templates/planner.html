@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}Weekly Content Planner — RepurposeKit AI{% endblock %}
+{% block page_title %}Weekly Content Planner{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Weekly Content Planner</h1>
+      <p class="page-sub">Get a full week content calendar matched to your posting frequency.</p>
+    </div>
+  </div>
+
+  {% if errors is defined and errors %}
+  <div class="alert alert-error">
+    <strong>Please fix the following:</strong>
+    <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+
+  {% if is_mock is defined and is_mock %}
+  <div class="badge-demo">⚠️ Demo Mode — results are illustrative.</div>
+  {% endif %}
+
+  <div class="card form-card">
+    <form method="post" action="/planner">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+
+      <div class="form-row">
+        <div class="field-group">
+          <label class="field-label" for="niche">Niche <span class="req">*</span></label>
+          <input class="input" type="text" id="niche" name="niche" required maxlength="200"
+                 placeholder="e.g. Fitness, Tech, Finance"
+                 value="{{ niche if niche is defined else '' }}" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="frequency">Posting Frequency</label>
+          <select class="select" id="frequency" name="frequency">
+            <option value="daily" {% if frequency is defined and frequency == 'daily' %}selected{% endif %}>Daily (7x/week)</option>
+            <option value="5x" {% if frequency is defined and frequency == '5x' %}selected{% endif %}>5x per week</option>
+            <option value="3x" {% if frequency is defined and frequency == '3x' %}selected{% endif %} >3x per week</option>
+            <option value="2x" {% if frequency is defined and frequency == '2x' %}selected{% endif %}>2x per week</option>
+            <option value="1x" {% if frequency is defined and frequency == '1x' %}selected{% endif %}>1x per week</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="objective">Objective <span class="req">*</span></label>
+        <input class="input" type="text" id="objective" name="objective" required maxlength="500"
+               placeholder="e.g. Build thought leadership and grow to 10k followers"
+               value="{{ objective if objective is defined else '' }}" />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Platforms <span class="req">*</span></label>
+        <div class="checkbox-group">
+          <label class="checkbox-label"><input type="checkbox" name="platforms" value="Instagram" checked /> Instagram</label>
+          <label class="checkbox-label"><input type="checkbox" name="platforms" value="LinkedIn" /> LinkedIn</label>
+          <label class="checkbox-label"><input type="checkbox" name="platforms" value="TikTok" /> TikTok</label>
+          <label class="checkbox-label"><input type="checkbox" name="platforms" value="YouTube" /> YouTube</label>
+          <label class="checkbox-label"><input type="checkbox" name="platforms" value="Twitter/X" /> Twitter / X</label>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg" id="plannerBtn">
+          <span class="btn-text">Generate Weekly Plan</span>
+          <span class="btn-loading hidden">Generating…</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function() {
+    const form = document.querySelector('form');
+    const btn = document.getElementById('plannerBtn');
+    if (form && btn) {
+      form.addEventListener('submit', function(e) {
+        var checked = document.querySelectorAll('input[name="platforms"]:checked');
+        if (!checked.length) {
+          e.preventDefault();
+          showToast('Please select at least one platform.', 'warn');
+          return;
+        }
+        const t = btn.querySelector('.btn-text');
+        const l = btn.querySelector('.btn-loading');
+        if (t && l) { t.classList.add('hidden'); l.classList.remove('hidden'); }
+        btn.disabled = true;
+      });
+    }
+  })();
+</script>
+{% endblock %}

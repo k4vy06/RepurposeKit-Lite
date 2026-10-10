@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% block title %}{{ gen.title }} — RepurposeKit Lite{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  {% if is_mock %}
+  <div class="badge-demo">⚠ Demo Mode</div>
+  {% endif %}
+
+  <div class="results-header">
+    <a href="/history" class="btn btn-ghost btn-sm">← History</a>
+    <h1 class="results-title">{{ gen.title }}</h1>
+    <div class="results-meta">
+      Tone: <span class="pill pill-{{ gen.tone }}">{{ gen.tone | capitalize }}</span>
+      &nbsp;·&nbsp; <time>{{ gen.created_at.strftime('%d %b %Y, %H:%M') }}</time>
+    </div>
+  </div>
+
+  <div class="card tags-card">
+    <div class="card-label">Title &amp; Hashtags</div>
+    <p class="gen-title-display">{{ gen.title }}</p>
+    <div class="hashtag-list">
+      {% for tag in gen.hashtags %}
+      <span class="hashtag">#{{ tag }}</span>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="results-grid">
+
+    <div class="card output-card">
+      <div class="card-header">
+        <span class="platform-label platform-linkedin">LinkedIn</span>
+        <span class="char-badge">{{ gen.linkedin | length }} chars</span>
+      </div>
+      <div class="card-body">
+        <pre class="output-text" id="linkedin-text">{{ gen.linkedin }}</pre>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-copy btn-sm" data-target="linkedin-text">Copy</button>
+      </div>
+    </div>
+
+    <div class="card output-card">
+      <div class="card-header">
+        <span class="platform-label platform-x">X / Twitter Thread</span>
+        <button class="btn btn-copy-all btn-sm" data-thread="true">Copy All</button>
+      </div>
+      <div class="card-body" id="x-thread-container">
+        {% for post in gen.x_thread %}
+        <div class="thread-post">
+          <div class="thread-post-header">
+            <span class="thread-num">{{ loop.index }}/{{ gen.x_thread | length }}</span>
+            <span class="char-badge {% if post | length > 280 %}char-over{% endif %}">{{ post | length }}/280</span>
+          </div>
+          <pre class="output-text thread-text" id="x-post-{{ loop.index }}">{{ post }}</pre>
+          <button class="btn btn-copy btn-sm" data-target="x-post-{{ loop.index }}">Copy</button>
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="card output-card">
+      <div class="card-header">
+        <span class="platform-label platform-instagram">Instagram</span>
+        <span class="char-badge">{{ gen.instagram | length }} / 2200</span>
+      </div>
+      <div class="card-body">
+        <pre class="output-text" id="instagram-text">{{ gen.instagram }}</pre>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-copy btn-sm" data-target="instagram-text">Copy</button>
+      </div>
+    </div>
+
+    <div class="card output-card">
+      <div class="card-header">
+        <span class="platform-label platform-newsletter">Newsletter</span>
+        <span class="char-badge">{{ gen.newsletter | length }} chars</span>
+      </div>
+      <div class="card-body">
+        <pre class="output-text" id="newsletter-text">{{ gen.newsletter }}</pre>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-copy btn-sm" data-target="newsletter-text">Copy</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="actions-bar">
+    <button class="btn btn-primary" id="downloadBtn">⬇ Download Markdown</button>
+    <a href="/" class="btn btn-ghost">New Generation</a>
+  </div>
+
+  <div id="copyNotification" class="copy-notification hidden">Copied!</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const EXPORT_DATA = {
+  title: {{ gen.title | tojson }},
+  tags: {{ gen.hashtags | tojson }},
+  linkedin: {{ gen.linkedin | tojson }},
+  x_thread: {{ gen.x_thread | tojson }},
+  instagram: {{ gen.instagram | tojson }},
+  newsletter: {{ gen.newsletter | tojson }},
+};
+</script>
+{% endblock %}

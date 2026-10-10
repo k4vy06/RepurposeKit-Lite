@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% block title %}Carousel Result — RepurposeKit AI{% endblock %}
+{% block page_title %}Carousel Script{% endblock %}
+
+{% block content %}
+<div class="container">
+  {% if is_mock %}
+  <div class="badge-demo">⚠️ Demo Mode — illustrative carousel script.</div>
+  {% endif %}
+
+  <div class="results-header">
+    <div class="results-meta">{{ platform }} · {{ all_slides | length }} slides</div>
+    <h1 class="results-title">{{ result.title }}</h1>
+  </div>
+
+  <!-- Slide viewer -->
+  <div class="carousel-viewer">
+    <div class="carousel-slides" id="carouselSlides">
+      {% for slide in all_slides %}
+      <div class="carousel-slide {% if loop.first %}active{% endif %}" data-slide="{{ loop.index0 }}">
+        <div class="slide-number">Slide {{ slide.slide_number }}</div>
+        <div class="slide-headline">{{ slide.headline }}</div>
+        <div class="slide-body">{{ slide.body }}</div>
+        {% if slide.cta %}
+        <div class="slide-cta">&#128073; {{ slide.cta }}</div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="carousel-nav">
+      <button class="btn btn-ghost btn-sm" id="prevSlide">&#8592; Prev</button>
+      <span class="slide-counter" id="slideCounter">1 / {{ all_slides | length }}</span>
+      <button class="btn btn-ghost btn-sm" id="nextSlide">Next &#8594;</button>
+    </div>
+    <div class="carousel-dots" id="carouselDots">
+      {% for slide in all_slides %}
+      <button class="carousel-dot {% if loop.first %}active{% endif %}" data-slide="{{ loop.index0 }}"></button>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- All slides list -->
+  <div style="margin-top: 1.5rem;">
+    <div class="card-label" style="margin-bottom:.75rem;">All Slides</div>
+    {% for slide in all_slides %}
+    <div class="card slide-list-item">
+      <div class="slide-list-header">
+        <span class="slide-num-badge">{{ slide.slide_number }}</span>
+        <span class="slide-list-headline">{{ slide.headline }}</span>
+        <button class="btn btn-copy btn-sm" data-target="slideBody{{ loop.index0 }}">Copy</button>
+      </div>
+      <div class="slide-list-body" id="slideBody{{ loop.index0 }}">{{ slide.body }}{% if slide.cta %} {{ slide.cta }}{% endif %}</div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <!-- Caption -->
+  <div class="card form-card" style="margin-top:1.25rem;">
+    <div class="card-label">Post Caption</div>
+    <p id="carouselCaption" style="font-size:.875rem; line-height:1.7; white-space:pre-wrap; margin:.5rem 0 .75rem;">{{ result.caption }}</p>
+    <button class="btn btn-copy btn-sm" data-target="carouselCaption">Copy Caption</button>
+  </div>
+
+  <div class="actions-bar" style="margin-top:1.5rem;">
+    <a href="/carousel" class="btn btn-ghost">&#8592; New Carousel</a>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  var slides = document.querySelectorAll('.carousel-slide');
+  var dots = document.querySelectorAll('.carousel-dot');
+  var counter = document.getElementById('slideCounter');
+  var current = 0;
+
+  function goTo(i) {
+    slides[current].classList.remove('active');
+    dots[current].classList.remove('active');
+    current = (i + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    dots[current].classList.add('active');
+    counter.textContent = (current + 1) + ' / ' + slides.length;
+  }
+
+  document.getElementById('prevSlide').addEventListener('click', function() { goTo(current - 1); });
+  document.getElementById('nextSlide').addEventListener('click', function() { goTo(current + 1); });
+  dots.forEach(function(dot) {
+    dot.addEventListener('click', function() { goTo(parseInt(this.dataset.slide)); });
+  });
+})();
+</script>
+{% endblock %}

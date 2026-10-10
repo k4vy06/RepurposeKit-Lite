@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Content Ideas — RepurposeKit AI{% endblock %}
+{% block page_title %}Content Ideas{% endblock %}
+
+{% block content %}
+<div class="container">
+  {% if is_mock %}
+  <div class="badge-demo">⚠️ Demo Mode — illustrative content ideas.</div>
+  {% endif %}
+
+  <div class="results-header">
+    <div class="results-meta">Niche: <strong>{{ niche }}</strong> · Platform: <strong>{{ platform }}</strong> · Goal: <strong>{{ goal }}</strong></div>
+    <h1 class="results-title">{{ ideas | length }} Content Ideas for {{ audience }}</h1>
+  </div>
+
+  <div class="ideas-grid">
+    {% for idea in ideas %}
+    <div class="idea-card card">
+      <div class="idea-header">
+        <span class="idea-number">#{{ idea.idea_number }}</span>
+        <span class="idea-format-badge">{{ idea.format }}</span>
+        <span class="idea-platform-badge">{{ idea.best_platform }}</span>
+      </div>
+      <div class="idea-title">{{ idea.title }}</div>
+      <div class="idea-section">
+        <div class="idea-section-label">Hook</div>
+        <div class="idea-hook" id="ideaHook{{ loop.index0 }}">{{ idea.hook }}</div>
+        <button class="btn btn-copy btn-sm" style="margin-top:.4rem;" data-target="ideaHook{{ loop.index0 }}">Copy Hook</button>
+      </div>
+      <div class="idea-section">
+        <div class="idea-section-label">Outline</div>
+        <div class="idea-outline">{{ idea.outline }}</div>
+      </div>
+      <div class="idea-why">&#128161; {{ idea.why_it_works }}</div>
+      <div class="idea-actions">
+        <a href="/carousel?topic={{ idea.title | urlencode }}" class="btn btn-ghost btn-sm">Make Carousel</a>
+        <a href="/reels?topic={{ idea.title | urlencode }}" class="btn btn-ghost btn-sm">Make Reel</a>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="actions-bar" style="margin-top:1.5rem;">
+    <a href="/ideas" class="btn btn-ghost">&#8592; New Ideas</a>
+  </div>
+</div>
+{% endblock %}

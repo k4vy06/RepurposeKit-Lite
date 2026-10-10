@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block title %}RepurposeKit Lite — One Idea. Four Platforms.{% endblock %}
+
+{% block content %}
+
+  <!-- ── Velaris hero ─────────────────────────────────────────────────────── -->
+  <div id="velaris-hero" class="velaris-hero">
+    <div class="velaris-content">
+      <span class="velaris-badge">⚡ Powered by AI</span>
+      <h1 class="velaris-title">One idea. <span class="velaris-accent">Four platforms.</span></h1>
+      <p class="velaris-sub">Paste your content, choose a tone, and get LinkedIn, X, Instagram &amp; Newsletter copy — instantly.</p>
+      <a href="#generate-form" class="btn velaris-cta">Get Started →</a>
+    </div>
+  </div>
+
+<div class="container" id="generate-form">
+
+  {% if is_mock %}
+  <div class="badge-demo">⚠ Demo Mode — Mock AI active. Set AI_PROVIDER=openai &amp; OPENAI_API_KEY for real generation.</div>
+  {% endif %}
+
+  {% if errors %}
+  <div class="alert alert-error">
+    <strong>Please fix the following:</strong>
+    <ul>
+      {% for e in errors %}<li>{{ e }}</li>{% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+
+  <div class="card form-card">
+    <form id="generateForm" method="POST" action="/generate" novalidate>
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+
+      <div class="field-group">
+        <label for="source_content" class="field-label">
+          Source Content
+          <span class="char-counter" id="charCounter">0 / 5000</span>
+        </label>
+        <textarea
+          id="source_content"
+          name="source_content"
+          class="textarea"
+          rows="8"
+          maxlength="5000"
+          placeholder="Paste your article, announcement, idea, or paragraph here…"
+          required
+        >{{ source_content if source_content else '' }}</textarea>
+        <div class="field-hint">Enter 1–5,000 characters. The AI will adapt this for each platform.</div>
+      </div>
+
+      <div class="field-group">
+        <label for="tone" class="field-label">Tone</label>
+        <select id="tone" name="tone" class="select">
+          <option value="professional" {% if tone == 'professional' %}selected{% endif %}>Professional</option>
+          <option value="casual" {% if tone == 'casual' %}selected{% endif %}>Casual</option>
+          <option value="witty" {% if tone == 'witty' %}selected{% endif %}>Witty</option>
+        </select>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg" id="generateBtn">
+          <span class="btn-text">✨ Generate</span>
+          <span class="btn-loading hidden">Generating…</span>
+        </button>
+        <button type="button" class="btn btn-secondary" id="exampleBtn">Load Example</button>
+        <button type="button" class="btn btn-ghost" id="clearBtn">Clear</button>
+      </div>
+    </form>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+const EXAMPLE_TEXT = `IBM has announced a significant expansion of its AI research initiatives, focusing on enterprise-grade large language models designed for regulated industries. The new models are being developed in partnership with leading universities and will prioritise explainability, safety, and compliance. This marks a pivotal shift in how AI is being positioned for sectors such as healthcare, finance, and government — where accountability is not optional.`;
+
+document.getElementById('exampleBtn').addEventListener('click', () => {
+  const ta = document.getElementById('source_content');
+  ta.value = EXAMPLE_TEXT;
+  ta.dispatchEvent(new Event('input'));
+});
+
+document.getElementById('clearBtn').addEventListener('click', () => {
+  const ta = document.getElementById('source_content');
+  ta.value = '';
+  ta.dispatchEvent(new Event('input'));
+});
+
+/* ── Velaris init ──────────────────────────────────────────────────────── */
+(function () {
+  const hero = document.getElementById('velaris-hero');
+  if (!hero) return;
+  const v = new Velaris(hero, {
+    bg:     '#0a0f1e',
+    colors: ['#4589ff', '#0f62fe', '#0043ce', '#001d6c'],
+    speed:  1.6,
+    grain:  0.35,
+  });
+  v.start();
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% block title %}Posting Time Advisor — RepurposeKit AI{% endblock %}
+{% block page_title %}Posting Time Advisor{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Posting Time Advisor</h1>
+      <p class="page-sub">Find the best times to post for your platform, niche, and audience.</p>
+    </div>
+  </div>
+
+  {% if errors is defined and errors %}
+  <div class="alert alert-error">
+    <strong>Please fix the following:</strong>
+    <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+
+  {% if is_mock is defined and is_mock %}
+  <div class="badge-demo">⚠️ Demo Mode — general guidance only, not real analytics data.</div>
+  {% endif %}
+
+  <div class="card form-card">
+    <form method="post" action="/posting-times">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+
+      <div class="form-row">
+        <div class="field-group">
+          <label class="field-label" for="platform">Platform</label>
+          <select class="select" id="platform" name="platform">
+            <option value="instagram" {% if platform is defined and platform == 'instagram' %}selected{% endif %}>Instagram</option>
+            <option value="linkedin" {% if platform is defined and platform == 'linkedin' %}selected{% endif %}>LinkedIn</option>
+            <option value="tiktok" {% if platform is defined and platform == 'tiktok' %}selected{% endif %}>TikTok</option>
+            <option value="youtube" {% if platform is defined and platform == 'youtube' %}selected{% endif %}>YouTube</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="content_type">Content Type</label>
+          <select class="select" id="content_type" name="content_type">
+            <option value="Reels / Short video">Reels / Short video</option>
+            <option value="Carousel">Carousel</option>
+            <option value="Static post">Static post</option>
+            <option value="Story">Story</option>
+            <option value="Long-form video">Long-form video</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="field-group">
+          <label class="field-label" for="niche">Niche <span class="req">*</span></label>
+          <input class="input" type="text" id="niche" name="niche" required maxlength="200"
+                 placeholder="e.g. Fitness, Tech, Finance"
+                 value="{{ niche if niche is defined else '' }}" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="audience">Audience <span class="req">*</span></label>
+          <input class="input" type="text" id="audience" name="audience" required maxlength="200"
+                 placeholder="e.g. Young professionals 25-35"
+                 value="{{ audience if audience is defined else '' }}" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="country">Country <span class="req">*</span></label>
+          <input class="input" type="text" id="country" name="country" required maxlength="100"
+                 placeholder="e.g. India, USA, UK"
+                 value="{{ country if country is defined else '' }}" />
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg" id="timingBtn">
+          <span class="btn-text">Get Best Times</span>
+          <span class="btn-loading hidden">Analysing…</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  {% if recommendation is defined %}
+  <div style="margin-top:1.5rem;">
+    <h2 class="section-title">Best Posting Windows for {{ recommendation.platform | title }}</h2>
+
+    <div class="timing-grid">
+      {% for window in recommendation.top_windows %}
+      <div class="card timing-card">
+        <div class="timing-day">{{ window.day }}</div>
+        <div class="timing-time">{{ window.time_range }}</div>
+        <div class="timing-reason">{{ window.reason }}</div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <div class="card form-card" style="margin-top:1.25rem;">
+      <div class="timing-advice-grid">
+        <div>
+          <div class="card-label">Frequency Advice</div>
+          <p style="font-size:.875rem; margin-top:.4rem;">{{ recommendation.frequency_advice }}</p>
+        </div>
+        <div>
+          <div class="card-label">Timezone Note</div>
+          <p style="font-size:.875rem; margin-top:.4rem;">{{ recommendation.timezone_note }}</p>
+        </div>
+        <div>
+          <div class="card-label">Pro Tip</div>
+          <p style="font-size:.875rem; margin-top:.4rem;">{{ recommendation.general_tip }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function() {
+    const form = document.querySelector('form');
+    const btn = document.getElementById('timingBtn');
+    if (form && btn) {
+      form.addEventListener('submit', function() {
+        const t = btn.querySelector('.btn-text');
+        const l = btn.querySelector('.btn-loading');
+        if (t && l) { t.classList.add('hidden'); l.classList.remove('hidden'); }
+        btn.disabled = true;
+      });
+    }
+  })();
+</script>
+{% endblock %}

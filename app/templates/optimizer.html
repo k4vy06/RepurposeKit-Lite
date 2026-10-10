@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Hook & Caption Optimizer — RepurposeKit AI{% endblock %}
+{% block page_title %}Hook & Caption Optimizer{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Hook &amp; Caption Optimizer</h1>
+      <p class="page-sub">Score your hook or caption and get AI-powered rewrites that stop the scroll.</p>
+    </div>
+  </div>
+
+  {% if errors is defined and errors %}
+  <div class="alert alert-error">
+    <strong>Please fix the following:</strong>
+    <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+
+  {% if is_mock is defined and is_mock %}
+  <div class="badge-demo">⚠️ Demo Mode — results are illustrative.</div>
+  {% endif %}
+
+  <div class="card form-card">
+    <form method="post" action="/optimizer">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+
+      <div class="field-group">
+        <label class="field-label" for="text">
+          Your Hook or Caption
+          <span class="char-counter" id="optCharCounter">0 / 2000</span>
+        </label>
+        <textarea class="textarea" id="text" name="text" rows="5" required maxlength="2000"
+                  placeholder="Paste your existing hook or caption here…">{{ text if text is defined else '' }}</textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="field-group">
+          <label class="field-label" for="platform">Platform</label>
+          <select class="select" id="platform" name="platform">
+            <option value="Instagram" {% if platform is defined and platform == 'Instagram' %}selected{% endif %}>Instagram</option>
+            <option value="LinkedIn" {% if platform is defined and platform == 'LinkedIn' %}selected{% endif %}>LinkedIn</option>
+            <option value="TikTok" {% if platform is defined and platform == 'TikTok' %}selected{% endif %}>TikTok</option>
+            <option value="Twitter/X" {% if platform is defined and platform == 'Twitter/X' %}selected{% endif %}>Twitter / X</option>
+            <option value="YouTube" {% if platform is defined and platform == 'YouTube' %}selected{% endif %}>YouTube</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="audience">Target Audience <span class="req">*</span></label>
+          <input class="input" type="text" id="audience" name="audience" required maxlength="200"
+                 placeholder="e.g. Entrepreneurs, gym-goers"
+                 value="{{ audience if audience is defined else '' }}" />
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="tone">Tone</label>
+          <select class="select" id="tone" name="tone">
+            <option value="professional" {% if tone is defined and tone == 'professional' %}selected{% endif %}>Professional</option>
+            <option value="casual" {% if tone is defined and tone == 'casual' %}selected{% endif %}>Casual</option>
+            <option value="witty" {% if tone is defined and tone == 'witty' %}selected{% endif %}>Witty</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg" id="optimizeBtn">
+          <span class="btn-text">Optimize Hook</span>
+          <span class="btn-loading hidden">Optimizing…</span>
+        </button>
+      </div>
+    </form>
+  </div>
+
+  {% if result is defined %}
+  <div style="margin-top:1.5rem;">
+    <!-- Score -->
+    <div class="card form-card" style="margin-bottom:1.25rem;">
+      <div class="opt-score-row">
+        <div>
+          <div class="card-label">Original Hook Score</div>
+          <div class="opt-score-display">
+            <span class="opt-score-num score-{{ result.score_original }}">{{ result.score_original }}/10</span>
+            <span class="opt-score-label">{% if result.score_original >= 8 %}Strong{% elif result.score_original >= 5 %}Needs Work{% else %}Weak{% endif %}</span>
+          </div>
+        </div>
+        <div style="flex:1; padding-left:1.5rem;">
+          <div class="card-label">Original Text</div>
+          <blockquote class="opt-original">{{ result.original }}</blockquote>
+        </div>
+      </div>
+    </div>
+
+    <!-- Variants -->
+    <div class="card-label" style="margin-bottom:.75rem;">Optimized Variants</div>
+    {% for v in result.variants %}
+    <div class="card opt-variant {% if loop.index0 == result.best_variant %}opt-variant-best{% endif %}">
+      {% if loop.index0 == result.best_variant %}
+      <div class="opt-best-badge">&#11088; Best Variant</div>
+      {% endif %}
+      <div class="opt-variant-text" id="optVariant{{ loop.index0 }}">{{ v.text }}</div>
+      <div class="opt-variant-why">{{ v.why }}</div>
+      <button class="btn btn-copy btn-sm" style="margin-top:.5rem;" data-target="optVariant{{ loop.index0 }}">Copy</button>
+    </div>
+    {% endfor %}
+
+    <!-- Tips -->
+    <div class="card form-card" style="margin-top:1.25rem;">
+      <div class="card-label">Improvement Tips</div>
+      <ul class="opt-tips-list">
+        {% for tip in result.improvement_tips %}
+        <li>{{ tip }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  var ta = document.getElementById('text');
+  var counter = document.getElementById('optCharCounter');
+  if (ta && counter) {
+    function upd() {
+      var len = ta.value.length;
+      counter.textContent = len + ' / 2000';
+      counter.classList.toggle('over', len > 2000);
+    }
+    ta.addEventListener('input', upd); upd();
+  }
+  var form = document.querySelector('form');
+  var btn = document.getElementById('optimizeBtn');
+  if (form && btn) {
+    form.addEventListener('submit', function() {
+      var t = btn.querySelector('.btn-text');
+      var l = btn.querySelector('.btn-loading');
+      if (t && l) { t.classList.add('hidden'); l.classList.remove('hidden'); }
+      btn.disabled = true;
+    });
+  }
+})();
+</script>
+{% endblock %}

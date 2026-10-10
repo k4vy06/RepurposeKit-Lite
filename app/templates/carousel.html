@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Carousel Studio — RepurposeKit AI{% endblock %}
+{% block page_title %}Carousel Studio{% endblock %}
+
+{% block content %}
+<div class="container">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Carousel Studio</h1>
+      <p class="page-sub">Build engaging slide-by-slide carousels for Instagram and LinkedIn.</p>
+    </div>
+  </div>
+
+  {% if errors is defined and errors %}
+  <div class="alert alert-error">
+    <strong>Please fix the following:</strong>
+    <ul>{% for e in errors %}<li>{{ e }}</li>{% endfor %}</ul>
+  </div>
+  {% endif %}
+
+  {% if is_mock is defined and is_mock %}
+  <div class="badge-demo">⚠️ Demo Mode — results are illustrative.</div>
+  {% endif %}
+
+  <div class="card form-card">
+    <form method="post" action="/carousel">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}" />
+
+      <div class="field-group">
+        <label class="field-label" for="topic">Topic <span class="req">*</span></label>
+        <input class="input" type="text" id="topic" name="topic" required maxlength="500"
+               placeholder="e.g. How to grow on Instagram in 2025"
+               value="{{ topic if topic is defined else '' }}" />
+      </div>
+
+      <div class="form-row">
+        <div class="field-group">
+          <label class="field-label" for="platform">Platform</label>
+          <select class="select" id="platform" name="platform">
+            <option value="Instagram" {% if platform is defined and platform == 'Instagram' %}selected{% endif %}>Instagram</option>
+            <option value="LinkedIn" {% if platform is defined and platform == 'LinkedIn' %}selected{% endif %}>LinkedIn</option>
+            <option value="TikTok" {% if platform is defined and platform == 'TikTok' %}selected{% endif %}>TikTok</option>
+            <option value="Pinterest" {% if platform is defined and platform == 'Pinterest' %}selected{% endif %}>Pinterest</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="format_type">Format</label>
+          <select class="select" id="format_type" name="format_type">
+            <option value="Educational">Educational</option>
+            <option value="Listicle">Listicle</option>
+            <option value="Story">Story / Narrative</option>
+            <option value="How-to">How-to / Tutorial</option>
+            <option value="Before vs After">Before vs After</option>
+          </select>
+        </div>
+        <div class="field-group">
+          <label class="field-label" for="slide_count">Slides</label>
+          <select class="select" id="slide_count" name="slide_count">
+            {% for n in [5, 6, 7, 8, 9, 10, 12] %}
+            <option value="{{ n }}" {% if slide_count is defined and slide_count == n %}selected{% endif %}>{{ n }} slides</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="audience">Target Audience <span class="req">*</span></label>
+        <input class="input" type="text" id="audience" name="audience" required maxlength="200"
+               placeholder="e.g. Beginner content creators"
+               value="{{ audience if audience is defined else '' }}" />
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary btn-lg" id="carouselBtn">
+          <span class="btn-text">Generate Carousel</span>
+          <span class="btn-loading hidden">Generating…</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  (function() {
+    const form = document.querySelector('form');
+    const btn = document.getElementById('carouselBtn');
+    if (form && btn) {
+      form.addEventListener('submit', function() {
+        const t = btn.querySelector('.btn-text');
+        const l = btn.querySelector('.btn-loading');
+        if (t && l) { t.classList.add('hidden'); l.classList.remove('hidden'); }
+        btn.disabled = true;
+      });
+    }
+  })();
+</script>
+{% endblock %}
