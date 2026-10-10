@@ -2,7 +2,14 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, DeclarativeBase
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./repurposekit.db")
+# On Vercel the project root is read-only; only /tmp is writable.
+# Fall back to /tmp when the default relative path is used.
+_default_db = (
+    "sqlite:////tmp/repurposekit.db"
+    if os.getenv("VERCEL")
+    else "sqlite:///./repurposekit.db"
+)
+DATABASE_URL = os.getenv("DATABASE_URL", _default_db)
 
 engine = create_engine(
     DATABASE_URL,

@@ -41,6 +41,22 @@ Open: http://localhost:8000
 
 ---
 
+## Deploying to Vercel
+
+1. Push the repo to GitHub.
+2. Import the project in [vercel.com](https://vercel.com) — framework preset: **Other**.
+3. Add these environment variables in the Vercel dashboard:
+
+| Variable | Value |
+|---|---|
+| `AI_PROVIDER` | `mock` or `openai` |
+| `OPENAI_API_KEY` | your key (if using OpenAI) |
+| `SECRET_KEY` | a random 32-byte hex string |
+
+> **Note:** The SQLite database lives in `/tmp` on Vercel and is ephemeral (reset on each cold start). For persistent history, set `DATABASE_URL` to an external database (e.g. PlanetScale, Neon, or Supabase).
+
+---
+
 ## Environment Variables
 
 | Variable | Default | Description |
