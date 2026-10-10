@@ -44,7 +44,7 @@ Open: http://localhost:8000
 ## Deploying to Vercel
 
 1. Push the repo to GitHub.
-2. Import the project in [vercel.com](https://vercel.com) — framework preset: **Other**.
+2. Import the project in [vercel.com](https://repurpose-kit-lite.vercel.app/) — framework preset: **Other**.
 3. Add these environment variables in the Vercel dashboard:
 
 | Variable | Value |
